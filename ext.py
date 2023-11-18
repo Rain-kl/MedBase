@@ -54,21 +54,22 @@ class Retry:
 
 
 class AsyncSpider:
-    def __init__(self, headers, proxies=None, timeout=10):
-        self.headers = headers
+    def __init__(self, proxies=None, timeout=10):
+        self.headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+                          "Chrome/102.0.0.0 Safari/537.36"
+        }
         self.proxies = proxies
         self.timeout = timeout
 
-    @Retry.async_retry(max_retries=3, _log='Get网络请求')
+    @Retry.async_retry(max_retries=3, _log='Get网络请求',success_log=False)
     async def _get_request(self, url: str, params=None):
         async with httpx.AsyncClient(proxies=self.proxies, verify=False) as client:
             response = await client.get(url, headers=self.headers, timeout=self.timeout, params=params)
             return response
 
-    @Retry.async_retry(max_retries=3, _log='Post网络请求')
+    @Retry.async_retry(max_retries=3, _log='Post网络请求',success_log=False)
     async def _post_request(self, url: str, data=None, _json=None):
         async with httpx.AsyncClient(proxies=self.proxies, verify=False) as client:
             response = await client.post(url, headers=self.headers, timeout=self.timeout, data=data, json=_json)
             return response
-
-

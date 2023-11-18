@@ -3,7 +3,6 @@ from loguru import logger
 from lxml import etree
 
 
-
 class Parse:
     @staticmethod
     def parseSearchDisease(response: httpx.Response):
@@ -26,3 +25,23 @@ class Parse:
                 return []
         # print(disease_info)
         return disease_info
+
+    @staticmethod
+    def parseWestDiseaseInfo(response: httpx.Response):
+        html = response.text
+        tree = etree.HTML(html)
+        # print(html)
+        disease = tree.xpath('//div[@class="jib-articl fr f14 jib-lh-articl"]//text()')
+        if len(disease) == 0:
+            disease = tree.xpath('//div[@class=" jib-articl fr f14 jib-lh-articl"]//text()')
+        # print(disease)
+        return disease
+
+    @staticmethod
+    def parseCtmDiseaseInfo(response: httpx.Response):
+        html = response.text
+        tree = etree.HTML(html)
+        # print(html)
+        disease = tree.xpath('//div[@class="zz-articl fr f14"]//text()')
+        # print(disease)
+        return disease
