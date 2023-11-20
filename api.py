@@ -32,4 +32,4 @@ def getDiseaseInfo(kw: str):
 
 
 if __name__ == '__main__':
-    uvicorn.run(app, reload=True)
+    uvicorn.run("api:app", reload=True)
