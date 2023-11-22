@@ -61,15 +61,36 @@ class AsyncSpider:
         }
         self.proxies = proxies
         self.timeout = timeout
+        self.status_dict={
+            200: '请求成功',
+            201: '创建成功',
+            202: '更新成功',
+            204: '删除成功',
+            400: '请求失败',
+            401: '未授权',
+            403: '禁止访问',
+            404: '未找到',
+            406: '请求格式错误',
+            410: '请求资源不存在',
+            422: '请求参数错误',
+            500: '服务器错误',
+            502: '网关错误',
+            503: '服务不可用',
+            504: '网关超时',
+        }
 
     @Retry.async_retry(max_retries=3, _log='Get网络请求',success_log=False)
     async def _get_request(self, url: str, params=None):
         async with httpx.AsyncClient(proxies=self.proxies, verify=False) as client:
             response = await client.get(url, headers=self.headers, timeout=self.timeout, params=params)
+            if response.status_code != 200:
+                logger.error(f'请求失败: {response.status_code} {self.status_dict[response.status_code]}')
             return response
 
     @Retry.async_retry(max_retries=3, _log='Post网络请求',success_log=False)
     async def _post_request(self, url: str, data=None, _json=None):
         async with httpx.AsyncClient(proxies=self.proxies, verify=False) as client:
             response = await client.post(url, headers=self.headers, timeout=self.timeout, data=data, json=_json)
+            if response.status_code != 200:
+                logger.error(f'请求失败: {response.status_code} {self.status_dict[response.status_code]}')
             return response

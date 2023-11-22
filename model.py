@@ -68,6 +68,8 @@ class Async_xywy(AsyncDisInfo):
             'keyword': keyword,
             'src': 'so'
         }
+        # request_url = f"{tar_url.__str__()}?keyword={keyword}&src=so"
+        # logger.debug(f'请求地址: {request_url}')
         rsp = await self._get_request(tar_url.__str__(), params=params)
         return rsp
 
@@ -84,6 +86,7 @@ class Async_xywy(AsyncDisInfo):
         :return:
         """
         tasks = []
+        logger.debug(f'请求地址: {url}')
         for section in sections:
             tasks.append(asyncio.create_task(self.getDiseaseInfo(section, url)))
         await asyncio.wait(tasks)
@@ -130,7 +133,7 @@ def main(keyword):
         "cause"
     ]
     te = Async_xywy()
-    rsp = asyncio.run(te.run(sections, keyword))
+    rsp = asyncio.run(te.run(keyword,sections))
     print(rsp)
 
 
